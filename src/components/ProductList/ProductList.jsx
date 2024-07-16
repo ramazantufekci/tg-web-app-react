@@ -14,9 +14,9 @@ const products = [
     {id:'8', title: 'karpuz', price: '9', description: 'Diyarbakır karpuzu'},
 ];
 
-const getTotalPrice = (items=[])=>{
-    return items.reduce((acc,item)=>{
-        return acc +=item.price,
+const getTotalPrice = (items = []) => {
+    return items.reduce((acc,item) => {
+        return acc +=item.price
     }, 0)
 }
 const ProductList = () =>{
