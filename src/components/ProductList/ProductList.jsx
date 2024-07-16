@@ -30,7 +30,7 @@ const ProductList = () =>{
             totalPrice: getTotalPrice(addedItems),
             queryId,
         }
-        fetch('http://localhost:8000',{
+        fetch('https://ramazantufekci.com/derya.php',{
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
