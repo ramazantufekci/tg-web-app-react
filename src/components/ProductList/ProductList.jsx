@@ -1,17 +1,17 @@
-import React, { useState } from "react";
+import React, { useState,useCallback, useEffect } from "react";
 import './ProductList.css';
 import ProductItem from "../ProductItem/ProductItem";
 import { useTelegram } from "../../hooks/useTelegram";
 
 const products = [
-    {id:'1', title: 'muz', price: '50', description: 'yerli muz'},
-    {id:'2', title: 'Elma', price: '20', description: 'Yeşil elma'},
-    {id:'3', title: 'Çilek', price: '35', description: 'Kokulu çilek'},
-    {id:'4', title: 'Şeftali', price: '70', description: 'yerli Şeftali'},
-    {id:'5', title: 'Erik', price: '50', description: 'Papaz eriği'},
-    {id:'6', title: 'dut', price: '45', description: 'Kırmızı dut'},
-    {id:'7', title: 'kavun', price: '19', description: 'Kırkağaç kavunu'},
-    {id:'8', title: 'karpuz', price: '9', description: 'Diyarbakır karpuzu'},
+    {id:'1', title: 'muz', price: 50, description: 'yerli muz'},
+    {id:'2', title: 'Elma', price: 20, description: 'Yeşil elma'},
+    {id:'3', title: 'Çilek', price: 35, description: 'Kokulu çilek'},
+    {id:'4', title: 'Şeftali', price: 70, description: 'yerli Şeftali'},
+    {id:'5', title: 'Erik', price: 50, description: 'Papaz eriği'},
+    {id:'6', title: 'dut', price: 45, description: 'Kırmızı dut'},
+    {id:'7', title: 'kavun', price: 19, description: 'Kırkağaç kavunu'},
+    {id:'8', title: 'karpuz', price: 9, description: 'Diyarbakır karpuzu'},
 ];
 
 const getTotalPrice = (items = []) => {
@@ -22,7 +22,30 @@ const getTotalPrice = (items = []) => {
 const ProductList = () =>{
 
     const [addedItems, setAddedItems] = useState([]);
-    const {tg} = useTelegram();
+    const {tg,queryId} = useTelegram();
+
+    const onSendData = useCallback(()=>{
+        const data={
+            products: addedItems,
+            totalPrice: getTotalPrice(addedItems),
+            queryId,
+        }
+        fetch('http://localhost:8000',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+    },[])
+
+    useEffect(()=>{
+        tg.onEvent('mainButtonClicked',onSendData)
+        return()=>{
+            tg.offEvent('mainButtonClicked',onSendData)
+        }
+    },[onSendData])
+
     const onAdd = (product) =>{
         const alreadyAdded = addedItems.find(item=>item.id==product.id);
         let newItems = [];
